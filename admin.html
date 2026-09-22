@@ -1,4 +1,30 @@
-<!doctype html><html lang="rw"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TaskPay Admin</title>
-<style>*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#071b36;color:#fff}header{padding:18px 20px;background:#0a2447;font-size:28px;font-weight:800}nav{padding:10px;background:#0a2447;display:flex;gap:8px;overflow:auto}nav a{color:#fff;text-decoration:none;border:1px solid #31527c;padding:11px 15px;border-radius:12px;white-space:nowrap}.wrap{max-width:950px;margin:auto;padding:20px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.box{background:#0d2a50;border:1px solid #23466f;border-radius:20px;padding:22px}.num{font-size:38px;font-weight:800}.blue{border-left:6px solid #1688ff}.green{border-left:6px solid #19d486}.yellow{border-left:6px solid #ffb31a}.row{padding:14px 0;border-bottom:1px solid #23466f}@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}</style></head>
-<body><header>TaskPay Admin</header><nav><a href="index.html">Dashboard</a><a href="admin.html">Admin Dashboard</a><a href="admin-users.html">Users</a><a href="admin-tasks.html">Imirimo</a></nav>
-<div class="wrap"><h2>Dashboard</h2><div class="grid"><div class="box blue">Abakoresha<div class="num">1,248</div></div><div class="box green">Akazi<div class="num">342</div></div><div class="box yellow">Amafaranga<div class="num">RWF 3.62M</div></div><div class="box">Transactions<div class="num">8,421</div></div></div><div class="box" style="margin-top:20px"><h2>Ibikorwa bya vuba</h2><div class="row">Umukoresha mushya yanditswe — 5 min ago</div><div class="row">Akazi gashya kemejwe — 12 min ago</div><div class="row">Withdrawal nshya — 20 min ago</div></div></div></body></html>
+<!doctype html><html lang="rw"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Dashboard - TaskPay</title><style>
+:root{--blue:#087ff5;--dark:#071d3a;--bg:#f4f7fb;--card:#fff;--green:#16c784;--text:#172033;--muted:#687386}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--blue);color:white;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:800}.wrap{max-width:900px;margin:auto;padding:20px}
+.card{background:white;border-radius:22px;padding:22px;margin:16px 0;box-shadow:0 4px 18px #0000000b}
+.balance{background:linear-gradient(135deg,#087ff5,#0563dc);color:white;border-radius:24px;padding:25px}
+.balance .amount{font-size:40px;font-weight:800;margin:8px 0 18px}
+button,.btn{border:0;border-radius:14px;padding:13px 18px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.primary{background:white;color:#087ff5}.blue{background:#087ff5;color:white}.green{background:#16c784;color:white}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tile{background:white;border-radius:20px;padding:22px;text-decoration:none;color:inherit}.tile b{font-size:20px}.tile p{color:var(--muted)}
+.list{padding:0;margin:0;list-style:none}.list li{padding:16px 0;border-bottom:1px solid #e8edf3}
+input,select{width:100%;padding:14px;border:1px solid #d7deea;border-radius:12px;margin:7px 0 14px;font-size:16px}
+label{font-weight:700}.nav{display:flex;gap:8px;overflow:auto;padding:10px 0}.nav a{white-space:nowrap;padding:10px 14px;border-radius:12px;background:#e9f2ff;color:#075fb8;text-decoration:none;font-weight:700}
+.admin{background:var(--dark);min-height:100vh;color:white}.admin .card,.admin .tile{background:#102b50;color:white}.admin .nav a{background:#163a67;color:white}.muted{color:var(--muted)}.admin .muted{color:#b8c7db}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px;border-bottom:1px solid #dfe6ef}
+@media(max-width:650px){.grid,.grid3{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr 1fr}.balance .amount{font-size:34px}table{font-size:13px}}
+</style></head><body class="admin">
+<header><div class="logo">▣ TaskPay</div><div>🔔</div></header><div class="wrap"><div class="nav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Abakoresha</a><a href="admin-tasks.html">Imirimo</a><a href="index.html">User side</a></div>
+<h1>Admin Dashboard</h1>
+<div class="grid">
+<div class="tile"><b>1,248</b><p class="muted">Abakoresha</p></div>
+<div class="tile"><b>342</b><p class="muted">Imirimo</p></div>
+<div class="tile"><b>RWF 3.62M</b><p class="muted">Amafaranga</p></div>
+<div class="tile"><b>8,421</b><p class="muted">Transactions</p></div>
+</div>
+<div class="card"><h2>Ibikorwa bya vuba</h2><ul class="list"><li>Umukoresha mushya yanditswe</li><li>Akazi gashya kemejwe</li><li>Withdraw request yakiriwe</li></ul></div>
+</div>
+</body></html>
