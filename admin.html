@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="rw">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TaskPay Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#071a35;color:#eef5ff}
+header{background:#06142a;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #17355e}
+.logo{font-size:24px;font-weight:800}.wrap{max-width:1000px;margin:auto;padding:20px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:#0c2344;border:1px solid #18385f;border-radius:16px;padding:18px}.num{font-size:28px;font-weight:800;margin-top:8px}.blue{border-left:5px solid #1687ff}.green{border-left:5px solid #15c47e}.orange{border-left:5px solid #ffad20}
+.item{padding:13px 0;border-bottom:1px solid #17355e}.pill{float:right;background:#123d32;color:#57e5aa;border-radius:20px;padding:5px 9px;font-size:12px}
+nav{display:flex;gap:8px;overflow:auto;margin:12px 0}nav button{white-space:nowrap;border:1px solid #244a75;background:#0c2344;color:#eef5ff;border-radius:10px;padding:10px 14px}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:11px;border-bottom:1px solid #17355e}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header><div class="logo">▣ TaskPay Admin</div><div>Admin ⚙️</div></header>
+<div class="wrap">
+<nav><button>Dashboard</button><button>Abakoresha</button><button>Akazi</button><button>Amakuru</button><button>Settings</button></nav>
+<div class="grid">
+<div class="card blue"><div>Abakoresha</div><div class="num">1,248</div></div>
+<div class="card green"><div>Akazi</div><div class="num">342</div></div>
+<div class="card orange"><div>Amafaranga</div><div class="num">RWF 3.62M</div></div>
+<div class="card"><div>Transactions</div><div class="num">8,421</div></div>
+</div>
+<div class="card" style="margin-top:14px"><h2>Ibikorwa bya vuba</h2>
+<div class="item">Umukoresha mushya yanditswe <span class="pill">5 min ago</span></div>
+<div class="item">Akazi gashya kemejwe <span class="pill">12 min ago</span></div>
+<div class="item">Kwishyura RWF 10,000 byakozwe <span class="pill">18 min ago</span></div>
+</div>
+<div class="card" style="margin-top:14px"><h2>Abakoresha</h2>
+<table><tr><th>Izina</th><th>Telefone</th><th>Status</th></tr>
+<tr><td>Mugenzi Jean</td><td>+250 78...</td><td><span class="pill">Active</span></td></tr>
+<tr><td>Uwimana Aline</td><td>+250 79...</td><td><span class="pill">Active</span></td></tr>
+<tr><td>Nyonsaba Eric</td><td>+250 78...</td><td><span class="pill">Active</span></td></tr>
+</table></div>
+</div>
+</body></html>
