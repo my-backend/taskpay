@@ -1,1 +1,124 @@
-<!doctype html><meta charset=utf-8><title>Akazi</title><link rel=stylesheet href=style.css><main><div class=card><h2>Akazi</h2><div id=l>...</div></div></main><script src=https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2></script><script src=config.js></script><script src=app.js></script><script>async function load(){await loginRequired();let r=await db.from('tasks').select('*').eq('status','open').order('created_at',{ascending:false});l.innerHTML=r.data?.length?r.data.map(x=>`<div class=card><h3>${x.title}</h3><p>${x.description}</p><b>${money(x.reward_rwf)}</b><button onclick="claim('${x.id}')">Fata akazi</button></div>`).join(''):'Nta kazi zihari ubu.'}async function claim(id){let r=await db.rpc('claim_task',{p_task:id});alert(r.error?.message||'Wafashe akazi');load()}load()</script>
+<!doctype html>
+<html lang="rw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Akazi - TaskPay</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main>
+    <div class="card">
+      <h2>Akazi</h2>
+      <div id="message">Turimo gushaka akazi...</div>
+      <div id="tasks"></div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+
+  <script>
+    const client = window.supabase.createClient(
+      window.TASKPAY_CONFIG.SUPABASE_URL,
+      window.TASKPAY_CONFIG.SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const message = document.getElementById("message");
+    const tasksBox = document.getElementById("tasks");
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function money(value) {
+      return new Intl.NumberFormat("rw-RW").format(Number(value || 0)) + " RWF";
+    }
+
+    async function loadTasks() {
+      message.textContent = "Turimo gushaka akazi...";
+      tasksBox.innerHTML = "";
+
+      const {
+        data: { session }
+      } = await client.auth.getSession();
+
+      if (!session) {
+        message.innerHTML =
+          'Ugomba kubanza kwinjira. <a href="login.html">Injira hano</a>.';
+        return;
+      }
+
+      const { data, error } = await client
+        .from("tasks")
+        .select("*")
+        .eq("status", "open")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        message.textContent = "Habaye ikibazo mu gushaka akazi.";
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        message.textContent = "Nta kazi gahari ubu.";
+        return;
+      }
+
+      message.textContent = "";
+
+      tasksBox.innerHTML = data.map(task => `
+        <div class="card" style="margin-top:15px">
+          <h3>${esc(task.title)}</h3>
+
+          <p>${esc(task.description || "")}</p>
+
+          <p>
+            <strong>Agahimbazamusyi:</strong>
+            ${money(task.reward_rwf)}
+          </p>
+
+          <button onclick="claimTask('${esc(task.id)}')">
+            Fata akazi
+          </button>
+        </div>
+      `).join("");
+    }
+
+    async function claimTask(id) {
+      if (!confirm("Urashaka gufata aka kazi?")) {
+        return;
+      }
+
+      const { data: sessionData } = await client.auth.getSession();
+
+      if (!sessionData.session) {
+        alert("Ugomba kubanza kwinjira.");
+        location.href = "login.html";
+        return;
+      }
+
+      const { error } = await client.rpc("claim_task", {
+        p_task: id
+      });
+
+      if (error) {
+        alert(error.message || "Aka kazi ntikafashwe.");
+        return;
+      }
+
+      alert("Wafashe akazi neza.");
+      loadTasks();
+    }
+
+    loadTasks();
+  </script>
+</body>
+  </html>
