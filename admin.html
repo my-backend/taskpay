@@ -1,5 +1,5 @@
-  <!doctype html>
-<html lang="en">
+<!doctype html>
+<html lang="rw">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,97 +8,67 @@
 </head>
 
 <body>
+  <main>
+    <div class="card">
+      <h1>Admin Panel</h1>
 
-<main>
+      <div id="status">Turimo kugenzura uburenganzira...</div>
 
-  <div class="card">
-    <h1>Admin Panel</h1>
-    <p id="status">Checking login...</p>
-  </div>
+      <div id="adminArea" style="display:none">
+        <h2>Murakaza neza Admin</h2>
 
-  <div class="card">
-    <h2>Deposits zitegereje</h2>
-    <div id="deposits">Loading...</div>
-  </div>
+        <p>Ufite uburenganzira bwo gucunga TaskPay.</p>
 
-  <div class="card">
-    <h2>Withdrawals zitegereje</h2>
-    <div id="withdrawals">Loading...</div>
-  </div>
+        <p>
+          <a href="index.html">← Subira kuri TaskPay</a>
+        </p>
+      </div>
+    </div>
+  </main>
 
-</main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
+  <script>
+    const client = window.supabase.createClient(
+      window.TASKPAY_CONFIG.SUPABASE_URL,
+      window.TASKPAY_CONFIG.SUPABASE_PUBLISHABLE_KEY
+    );
 
-<script>
-const client = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+    const statusBox = document.getElementById("status");
+    const adminArea = document.getElementById("adminArea");
 
-async function loadAdmin() {
+    async function checkAdmin() {
+      const {
+        data: { session }
+      } = await client.auth.getSession();
 
-  const status = document.getElementById("status");
-  const deposits = document.getElementById("deposits");
-  const withdrawals = document.getElementById("withdrawals");
+      if (!session) {
+        statusBox.innerHTML =
+          'Ugomba kubanza kwinjira. <a href="login.html">Injira hano</a>.';
+        return;
+      }
 
-  try {
+      const { data, error } = await client.rpc("is_admin");
 
-    const {
-      data: { session }
-    } = await client.auth.getSession();
+      if (error) {
+        console.error(error);
+        statusBox.textContent =
+          "Habaye ikibazo mu kugenzura uburenganzira.";
+        return;
+      }
 
-    if (!session) {
-      status.innerHTML =
-        'Nturi winjiye. <a href="login.html">Kanda hano winjire</a>.';
+      if (data !== true) {
+        statusBox.textContent =
+          "Nturi admin. Nta burenganzira bwo kwinjira muri Admin Panel.";
+        return;
+      }
 
-      deposits.textContent = "Login required";
-      withdrawals.textContent = "Login required";
-      return;
+      statusBox.textContent = "";
+      adminArea.style.display = "block";
     }
 
-    const user = session.user;
-
-    const { data: profile, error } = await client
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (error) {
-      console.error(error);
-      status.textContent = "Habaye ikibazo mu kubona profile.";
-      return;
-    }
-
-    if (!profile) {
-      status.textContent = "Profile y'uyu mukoresha ntiyabonetse.";
-      return;
-    }
-
-    if (profile.role !== "admin") {
-      status.textContent = "Nturi admin.";
-      deposits.textContent = "Access denied";
-      withdrawals.textContent = "Access denied";
-      return;
-    }
-
-    status.textContent = "Wemejwe nka ADMIN.";
-
-    deposits.textContent = "Nta deposits zitegereje.";
-    withdrawals.textContent = "Nta withdrawals zitegereje.";
-
-  } catch (err) {
-
-    console.error(err);
-    status.textContent = "Habaye ikibazo cya system.";
-
-  }
-}
-
-loadAdmin();
-</script>
-
+    checkAdmin();
+  </script>
 </body>
 </html>
