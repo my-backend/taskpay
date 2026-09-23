@@ -16,7 +16,6 @@
 
       <div id="adminArea" style="display:none">
         <h2>Murakaza neza Admin</h2>
-
         <p>Ufite uburenganzira bwo gucunga TaskPay.</p>
 
         <p>
@@ -30,42 +29,102 @@
   <script src="config.js"></script>
 
   <script>
-    const client = window.supabase.createClient(
-      window.TASKPAY_CONFIG.SUPABASE_URL,
-      window.TASKPAY_CONFIG.SUPABASE_PUBLISHABLE_KEY
-    );
-
     const statusBox = document.getElementById("status");
     const adminArea = document.getElementById("adminArea");
 
+    function showError(message) {
+      statusBox.innerHTML =
+        '<strong>Ikibazo:</strong><br>' + message;
+    }
+
     async function checkAdmin() {
-      const {
-        data: { session }
-      } = await client.auth.getSession();
+      try {
+        if (!window.TASKPAY_CONFIG) {
+          showError("config.js ntabwo yabonetse.");
+          return;
+        }
 
-      if (!session) {
-        statusBox.innerHTML =
-          'Ugomba kubanza kwinjira. <a href="login.html">Injira hano</a>.';
-        return;
+        if (!window.TASKPAY_CONFIG.SUPABASE_URL) {
+          showError("SUPABASE_URL ibura muri config.js.");
+          return;
+        }
+
+        if (!window.TASKPAY_CONFIG.SUPABASE_PUBLISHABLE_KEY) {
+          showError("SUPABASE_PUBLISHABLE_KEY ibura muri config.js.");
+          return;
+        }
+
+        if (!window.supabase) {
+          showError("Supabase library ntabwo yapakiwe.");
+          return;
+        }
+
+        const client = window.supabase.createClient(
+          window.TASKPAY_CONFIG.SUPABASE_URL,
+          window.TASKPAY_CONFIG.SUPABASE_PUBLISHABLE_KEY
+        );
+
+        statusBox.textContent = "Turimo kugenzura login...";
+
+        const sessionResult = await Promise.race([
+          client.auth.getSession(),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error("Supabase yatwaye igihe kinini cyane.")),
+              10000
+            )
+          )
+        ]);
+
+        const session = sessionResult.data?.session;
+
+        if (!session) {
+          showError(
+            'Nta login yabonetse. <a href="login.html">Injira muri TaskPay</a>.'
+          );
+          return;
+        }
+
+        statusBox.textContent = "Turimo kugenzura Admin...";
+
+        const adminResult = await Promise.race([
+          client.rpc("is_admin"),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error("Is_admin yatwaye igihe kinini cyane.")),
+              10000
+            )
+          )
+        ]);
+
+        if (adminResult.error) {
+          console.error("Admin error:", adminResult.error);
+          showError(
+            "Supabase yanze kugenzura Admin.<br><br>" +
+            adminResult.error.message
+          );
+          return;
+        }
+
+        if (adminResult.data !== true) {
+          showError(
+            "Nturi admin. Konti yawe ntabwo yemerewe gufungura Admin Panel."
+          );
+          return;
+        }
+
+        statusBox.textContent = "";
+        adminArea.style.display = "block";
+
+      } catch (error) {
+        console.error("TaskPay Admin error:", error);
+
+        showError(
+          (error && error.message)
+            ? error.message
+            : "Habaye ikibazo kitazwi."
+        );
       }
-
-      const { data, error } = await client.rpc("is_admin");
-
-      if (error) {
-        console.error(error);
-        statusBox.textContent =
-          "Habaye ikibazo mu kugenzura uburenganzira.";
-        return;
-      }
-
-      if (data !== true) {
-        statusBox.textContent =
-          "Nturi admin. Nta burenganzira bwo kwinjira muri Admin Panel.";
-        return;
-      }
-
-      statusBox.textContent = "";
-      adminArea.style.display = "block";
     }
 
     checkAdmin();
