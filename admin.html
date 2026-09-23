@@ -1,1 +1,74 @@
-<!doctype html><meta charset=utf-8><title>TaskPay Admin</title><link rel=stylesheet href=style.css><main><div class=card><h1>Admin</h1><p id=x></p></div><div class=card><h2>Deposits zitegereje</h2><div id=d></div></div><div class=card><h2>Withdrawals zitegereje</h2><div id=w></div></div></main><script src=https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2></script><script src=config.js></script><script src=app.js></script><script>async function load(){let p=await prof();if(!p||p.role!='admin'){x.textContent='Nturi admin.';return}let d=await db.from('deposits').select('*').eq('status','pending').order('created_at',{ascending:false});document.querySelector('#d').innerHTML=d.data?.length?d.data.map(q=>`<div class=card>${q.network} — ${money(q.amount_rwf)} — TX: ${q.transaction_id}<button onclick="ad('${q.id}')">Approve</button><button class=danger onclick="rd('${q.id}')">Reject</button></div>`).join(''):'Nta deposit zitegereje.';let w=await db.from('withdrawals').select('*').eq('status','pending').order('created_at',{ascending:false});document.querySelector('#w').innerHTML=w.data?.length?w.data.map(q=>`<div class=card>${q.network} — ${money(q.amount_rwf)} — ${q.phone}<button onclick="pw('${q.id}')">Mark Paid</button></div>`).join(''):'Nta withdraw zitegereje.'}async function ad(id){let r=await db.rpc('approve_deposit',{p_id:id});alert(r.error?.message||'Approved');load()}async function rd(id){let r=await db.rpc('reject_deposit',{p_id:id});alert(r.error?.message||'Rejected');load()}async function pw(id){let r=await db.rpc('mark_withdraw_paid',{p_id:id});alert(r.error?.message||'Paid');load()}load()</script>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TaskPay Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<main>
+  <div class="card">
+    <h1>Admin Panel</h1>
+    <p id="status">Checking admin access...</p>
+  </div>
+
+  <div class="card">
+    <h2>Deposits zitegereje</h2>
+    <div id="deposits">Loading...</div>
+  </div>
+
+  <div class="card">
+    <h2>Withdrawals zitegereje</h2>
+    <div id="withdrawals">Loading...</div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+
+<script>
+async function loadAdmin() {
+  const status = document.getElementById("status");
+  const deposits = document.getElementById("deposits");
+  const withdrawals = document.getElementById("withdrawals");
+
+  try {
+    if (typeof prof !== "function") {
+      status.textContent = "Admin system error: prof() ntibonetse.";
+      return;
+    }
+
+    const profile = await prof();
+
+    if (!profile) {
+      status.textContent = "Nturi winjiye muri TaskPay.";
+      return;
+    }
+
+    if (profile.role !== "admin") {
+      status.textContent = "Nturi admin.";
+      deposits.textContent = "Access denied";
+      withdrawals.textContent = "Access denied";
+      return;
+    }
+
+    status.textContent = "Wemejwe nka ADMIN.";
+
+    deposits.textContent = "Nta deposits zitegereje.";
+    withdrawals.textContent = "Nta withdrawals zitegereje.";
+
+  } catch (error) {
+    console.error(error);
+    status.textContent = "Habaye ikibazo mu kugenzura admin.";
+  }
+}
+
+loadAdmin();
+</script>
+
+</body>
+</html>
