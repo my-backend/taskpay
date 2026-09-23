@@ -1,4 +1,4 @@
-<!doctype html>
+  <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -10,9 +10,10 @@
 <body>
 
 <main>
+
   <div class="card">
     <h1>Admin Panel</h1>
-    <p id="status">Checking admin access...</p>
+    <p id="status">Checking login...</p>
   </div>
 
   <div class="card">
@@ -24,28 +25,55 @@
     <h2>Withdrawals zitegereje</h2>
     <div id="withdrawals">Loading...</div>
   </div>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
-<script src="app.js"></script>
 
 <script>
+const client = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
 async function loadAdmin() {
+
   const status = document.getElementById("status");
   const deposits = document.getElementById("deposits");
   const withdrawals = document.getElementById("withdrawals");
 
   try {
-    if (typeof prof !== "function") {
-      status.textContent = "Admin system error: prof() ntibonetse.";
+
+    const {
+      data: { session }
+    } = await client.auth.getSession();
+
+    if (!session) {
+      status.innerHTML =
+        'Nturi winjiye. <a href="login.html">Kanda hano winjire</a>.';
+
+      deposits.textContent = "Login required";
+      withdrawals.textContent = "Login required";
       return;
     }
 
-    const profile = await prof();
+    const user = session.user;
+
+    const { data: profile, error } = await client
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error(error);
+      status.textContent = "Habaye ikibazo mu kubona profile.";
+      return;
+    }
 
     if (!profile) {
-      status.textContent = "Nturi winjiye muri TaskPay.";
+      status.textContent = "Profile y'uyu mukoresha ntiyabonetse.";
       return;
     }
 
@@ -61,9 +89,11 @@ async function loadAdmin() {
     deposits.textContent = "Nta deposits zitegereje.";
     withdrawals.textContent = "Nta withdrawals zitegereje.";
 
-  } catch (error) {
-    console.error(error);
-    status.textContent = "Habaye ikibazo mu kugenzura admin.";
+  } catch (err) {
+
+    console.error(err);
+    status.textContent = "Habaye ikibazo cya system.";
+
   }
 }
 
